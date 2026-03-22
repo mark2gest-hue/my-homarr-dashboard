@@ -1,69 +1,64 @@
 // @ts-nocheck
 "use client";
-import React, { useState } from 'react';
+import React from 'react';
 
-const APPS = [
-  { id: 'gest', name: "Gestionale", url: "https://gestionale.italianintunisia.com/", icon: "📊" },
-  { id: 'repl', name: "Replit", url: "https://replit.com", icon: "🌀" },
-  { id: 'gem', name: "Gemini", url: "https://gemini.google.com", icon: "💎" },
-  { id: 'anti', name: "Antigravity", url: "https://antigravity.so", icon: "🚀" },
-  { id: 'wa', name: "WhatsApp", url: "https://web.whatsapp.com", icon: "💬" },
+const COMBOS = [
+  { 
+    id: 'replit-dual', 
+    name: "COMBO REPLIT (Account A + B)", 
+    desc: "Apre 2 finestre separate per i tuoi 2 account",
+    icon: "🌀🌀",
+    action: () => {
+      window.open("https://replit.com", "replit1", "width=800,height=900,left=0");
+      // Per il secondo account, il trucco è usare un URL leggermente diverso o un altro browser
+      // Se usi Chrome come principale, questa si aprirà lì.
+      window.open("https://replit.com/~", "replit2", "width=800,height=900,left=800");
+    }
+  },
+  { 
+    id: 'ai-dual', 
+    name: "COMBO AI (Gemini + Perplexity)", 
+    icon: "🤖✨",
+    desc: "Ricerca e Generazione affiancate",
+    action: () => {
+      window.open("https://gemini.google.com", "gemini", "width=800,height=900,left=0");
+      window.open("https://perplexity.ai", "perplexity", "width=800,height=900,left=800");
+    }
+  },
+  { 
+    id: 'prod-dual', 
+    name: "COMBO PROD (Gestionale + Itaresort)", 
+    icon: "🏨📊",
+    desc: "Monitoraggio produzione live",
+    action: () => {
+      window.open("https://gestionale.italianintunisia.com/", "gestionale", "width=800,height=900,left=0");
+      window.open("https://itaresort.com", "itaresort", "width=800,height=900,left=800");
+    }
+  }
 ];
 
-export default function SidebarOS() {
-  const [activeApp, setActiveApp] = useState(APPS[0]);
-
+export default function ComboLauncher() {
   return (
-    <main className="h-screen w-screen bg-black flex overflow-hidden">
-      {/* SIDEBAR ULTRA-SLIM */}
-      <nav className="w-16 flex flex-col items-center py-4 bg-zinc-900 border-r border-zinc-800 gap-4">
-        <div className="mb-4 opacity-50 text-[10px] font-black">MENU</div>
-        {APPS.map((app) => (
+    <main className="h-screen w-screen bg-[#050505] text-white p-10 font-sans">
+      <header className="mb-12 border-b border-zinc-800 pb-6">
+        <h1 className="text-2xl font-black tracking-tighter text-emerald-500">WORKFLOW SELECTOR</h1>
+        <p className="text-zinc-500 text-xs uppercase tracking-widest mt-1">Scegli la postazione di lavoro</p>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {COMBOS.map((combo) => (
           <button
-            key={app.id}
-            onClick={() => setActiveApp(app)}
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl transition-all duration-200 ${
-              activeApp.id === app.id 
-              ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)] scale-110' 
-              : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
-            }`}
-            title={app.name}
+            key={combo.id}
+            onClick={combo.action}
+            className="group p-8 bg-zinc-900/50 border border-zinc-800 rounded-[40px] hover:border-emerald-500 transition-all text-left shadow-2xl"
           >
-            {app.icon}
+            <div className="text-5xl mb-6">{combo.icon}</div>
+            <h3 className="text-xl font-bold mb-2 group-hover:text-emerald-400 transition-colors">{combo.name}</h3>
+            <p className="text-zinc-500 text-sm leading-relaxed">{combo.desc}</p>
+            <div className="mt-6 text-[10px] font-black text-zinc-700 uppercase tracking-tighter">Lancia Postazione →</div>
           </button>
         ))}
-      </nav>
-
-      {/* VIEWPORT PRINCIPALE */}
-      <section className="flex-1 flex flex-col bg-zinc-950">
-        {/* Header con URL Reale per Siti che bloccano iframe */}
-        <div className="h-8 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-4">
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-            {activeApp.name} — <span className="lowercase font-normal">{activeApp.url}</span>
-          </span>
-          <button 
-            onClick={() => window.open(activeApp.url, '_blank')}
-            className="text-[10px] bg-zinc-800 px-2 py-0.5 rounded hover:bg-zinc-700"
-          >
-            Apri Esterno ↗
-          </button>
-        </div>
-
-        {/* L'area di lavoro */}
-        <div className="flex-1 relative">
-          <iframe 
-            src={activeApp.url} 
-            className="w-full h-full border-none"
-            title={activeApp.name}
-            allow="clipboard-read; clipboard-write; camera; microphone;"
-          />
-          
-          {/* Overlay di aiuto se il sito è bloccato */}
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10">
-             <span className="text-8xl font-black uppercase rotate-12">{activeApp.name}</span>
-          </div>
-        </div>
-      </section>
+      </div>
     </main>
   );
 }
