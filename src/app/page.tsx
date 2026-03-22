@@ -1,95 +1,51 @@
 // @ts-nocheck
 "use client";
 import React, { useState } from 'react';
-import { CONFIG } from './links';
 
-export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState(CONFIG.tabs[0].id);
+export default function MultiViewDashboard() {
+  // Qui inserisci i 4 o 6 siti che vuoi SEMPRE aperti contemporaneamente
+  const [apps] = useState([
+    { name: "Gestionale", url: "https://gestionale.italianintunisia.com/", icon: "📊" },
+    { name: "Antigravity", url: "https://antigravity.so", icon: "🚀" },
+    { name: "Replit", url: "https://replit.com", icon: "🌀" },
+    { name: "Gemini", url: "https://gemini.google.com", icon: "💎" },
+  ]);
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden">
-      <div className="max-w-7xl mx-auto p-6 sm:p-10">
-        
-        {/* Header */}
-        <header className="mb-10 text-center">
-          <h1 className="text-3xl font-black tracking-tighter bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent">
-            COMMAND CENTER
-          </h1>
-          <div className="flex items-center justify-center gap-2 mt-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <p className="text-zinc-500 text-[10px] uppercase tracking-[0.3em]">Sistemi Operativi Online</p>
-          </div>
-        </header>
-        
-        {/* Navigazione Tab */}
-        <nav className="flex justify-center gap-1.5 mb-10 p-1.5 bg-zinc-900/40 backdrop-blur-md rounded-2xl w-fit mx-auto border border-zinc-800/50 shadow-2xl">
-          {CONFIG.tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
-                activeTab === tab.id 
-                ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.15)] scale-105' 
-                : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-          {/* Nuovo Tab Speciale per il Gestionale */}
-          <button
-            onClick={() => setActiveTab('live-gestionale')}
-            className={`px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
-              activeTab === 'live-gestionale' 
-              ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.3)] scale-105' 
-              : 'text-zinc-500 hover:text-emerald-400 hover:bg-emerald-900/20'
-            }`}
-          >
-            📊 LIVE GESTIONALE
-          </button>
-        </nav>
+    <main className="h-screen w-screen bg-black overflow-hidden flex flex-col font-sans">
+      {/* Barra Superiore Sottile */}
+      <header className="h-10 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-4 shadow-2xl">
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <h1 className="text-[10px] font-black tracking-[0.4em] text-zinc-400 uppercase">Multi-Stream Command Center</h1>
+        </div>
+        <div className="text-[9px] text-zinc-600 font-mono tracking-tighter uppercase">Status: All Systems Operational</div>
+      </header>
 
-        {/* Contenuto Dinamico */}
-        {activeTab === 'live-gestionale' ? (
-          /* VISTA GESTIONALE FULL SCREEN */
-          <div className="animate-in fade-in zoom-in duration-500">
-            <div className="w-full h-[75vh] rounded-3xl overflow-hidden border border-emerald-500/30 bg-zinc-900 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-              <iframe 
-                src="https://gestionale.italianintunisia.com/" 
-                className="w-full h-full border-none"
-                title="Gestionale Live"
-              />
+      {/* Griglia di Webview Live */}
+      <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-1 p-1 bg-zinc-800">
+        {apps.map((app, index) => (
+          <div key={index} className="relative group bg-zinc-900 overflow-hidden rounded-lg border border-zinc-700/50">
+            {/* Overlay Titolo Sito */}
+            <div className="absolute top-2 left-2 z-10 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-2 shadow-xl opacity-40 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <span className="text-xs">{app.icon}</span>
+              <span className="text-[9px] font-bold text-white uppercase tracking-widest">{app.name}</span>
             </div>
-            <p className="text-center text-zinc-600 text-[10px] mt-4 uppercase tracking-widest">Accesso Diretto Crittografato</p>
+            
+            {/* Tasto Ingrandisci (Opzionale) */}
+            <a href={app.url} target="_blank" className="absolute top-2 right-2 z-10 bg-zinc-800 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-zinc-700">
+              <span className="text-[10px]">↗️</span>
+            </a>
+
+            {/* Il Sito Vero e Proprio */}
+            <iframe 
+              src={app.url} 
+              className="w-full h-full border-none pointer-events-auto"
+              title={app.name}
+              allow="clipboard-read; clipboard-write; camera; microphone;"
+            />
           </div>
-        ) : (
-          /* GRIGLIA CARD CLASSICA */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 animate-in slide-in-from-bottom-4 duration-500">
-            {CONFIG.tabs.find(t => t.id === activeTab)?.links.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="group p-6 bg-zinc-900/50 border border-zinc-800/50 rounded-2xl hover:border-zinc-500/50 hover:bg-zinc-800/80 transition-all duration-300 shadow-lg relative overflow-hidden"
-              >
-                <div className="flex items-start justify-between relative z-10">
-                  <div className="text-3xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                    {link.icon}
-                  </div>
-                  <span className="text-[9px] font-black text-zinc-500 bg-zinc-950 px-2 py-1 rounded-md uppercase tracking-tighter border border-zinc-800">
-                    {link.label}
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold text-zinc-100 group-hover:text-white transition-colors">{link.name}</h3>
-                <p className="text-[10px] text-zinc-600 mt-1 uppercase tracking-wider">Avvia Sessione →</p>
-                
-                {/* Effetto luce al passaggio del mouse */}
-                <div className="absolute -inset-x-20 -top-20 h-40 w-40 bg-white/5 blur-[80px] group-hover:bg-white/10 transition-all duration-700"></div>
-              </a>
-            ))}
-          </div>
-        )}
+        ))}
       </div>
     </main>
   );
